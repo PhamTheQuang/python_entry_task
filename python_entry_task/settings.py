@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_event'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -55,7 +56,7 @@ WSGI_APPLICATION = 'python_entry_task.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_test_db',
+        'NAME': 'social_event_db',
         'USER': 'root',
         'PASSWORD': 'password',
         'HOST': 'localhost'
