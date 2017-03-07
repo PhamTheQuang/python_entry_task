@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`event_tab` (
 	`address` VARCHAR(128) NOT NULL,
 	`lon` FLOAT NOT NULL,
 	`lat` FLOAT NOT NULL,
-	`main_pictures` VARCHAR(2086) NULL,
+	`main_pictures` VARCHAR(2086) NOT NULL DEFAULT "",
 	`create_time` INT UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
 	INDEX idx_channel_id (`create_time`, `channel_id`),
@@ -104,4 +104,3 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`participant_tab` (
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
-

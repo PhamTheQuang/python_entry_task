@@ -83,7 +83,9 @@ per=20
             "address": "Washington DC",
             "lat": 100.1234,
             "long": 100.1234,
-            "main_picture_url": "http://social_events/00001.png"
+            "main_picture_url": "http://social_events/00001.png",
+            "user_like_id": 1,
+            "user_participant_id": 1
         }
     ]
 }

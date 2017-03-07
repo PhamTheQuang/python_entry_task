@@ -1,4 +1,9 @@
 from django.db import models
+from social_event.service import authorization
+
+# for obj in User.objects.select_related("item").all():
+# prefetch_related
+#     print obj.item.name
 
 class Admin(models.Model):
     username = models.CharField(max_length=128)
@@ -6,6 +11,12 @@ class Admin(models.Model):
     password_digest = models.CharField(max_length=128)
     token = models.CharField(max_length=32, blank=True)
     token_expire_time = models.PositiveIntegerField(null=True)
+
+    def save(self):
+        # TODO: Check password is changed
+        if self.pk is None:
+            Authorization.generate_password_digest(self)
+        super(self.__class__, self),save(*args, **kwargs)
 
     class Meta:
         db_table = "admin_tab"
@@ -18,6 +29,12 @@ class User(models.Model):
     token_expire_time = models.PositiveIntegerField(null=True)
     full_name = models.CharField(max_length=128, blank=True)
     portrait = models.CharField(max_length=2086)
+
+    def save(self):
+        # TODO: DRY with Admin
+        if self.pk is None:
+            Authorization.generate_password_digest(self)
+        super(self.__class__, self),save(*args, **kwargs)
 
     class Meta:
         db_table = "user_tab"
@@ -37,6 +54,7 @@ class Event(models.Model):
     lat = models.FloatField()
     main_pictures = models.CharField(max_length=2086, blank=True)
     create_time = models.PositiveIntegerField()
+    channel = models.ForeignKey('Channel', db_constraint=False)
 
     class Meta:
         db_table = "event_tab"
@@ -50,6 +68,7 @@ class Channel(models.Model):
 class Picture(models.Model):
     event_id = models.BigIntegerField()
     path = models.CharField(max_length=128)
+    event = models.ForeignKey('Event', db_constraint=False)
 
     class Meta:
         db_table = "picture_tab"
@@ -60,6 +79,9 @@ class Comment(models.Model):
     event_id = models.BigIntegerField()
     reply_comment_id = models.BigIntegerField(null=True)
     create_time = models.PositiveIntegerField()
+    event = models.ForeignKey('Event', db_constraint=False)
+    user = models.ForeignKey('User', db_constraint=False)
+    reply_comment = models.ForeignKey('Comment', db_constraint=False, null=True)
 
     class Meta:
         db_table = "comment_tab"
@@ -68,6 +90,8 @@ class Like(models.Model):
     user_id = models.BigIntegerField()
     event_id = models.BigIntegerField()
     create_time = models.PositiveIntegerField()
+    event = models.ForeignKey('Event', db_constraint=False)
+    user = models.ForeignKey('User', db_constraint=False)
 
     class Meta:
         db_table = "like_tab"
@@ -76,6 +100,8 @@ class Participiant(models.Model):
     user_id = models.BigIntegerField()
     event_id = models.BigIntegerField()
     create_time = models.PositiveIntegerField()
+    event = models.ForeignKey('Event', db_constraint=False)
+    user = models.ForeignKey('User', db_constraint=False)
 
     class Meta:
         db_table = "participant_tab"
