@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`admin_tab` (
 	`token_expire_time` INT UNSIGNED NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX idx_username (`username`),
-	INDEX idx_token (`token`)
+	INDEX idx_token (`token`, `token_expire_time`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
@@ -16,14 +16,14 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`user_tab` (
 	`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`username` VARCHAR(128) NOT NULL,
 	`salt` VARCHAR(32) NOT NULL,
-	`password_digest` VARCHAR(60) NOT NULL,
+	`password_digest` VARCHAR(128) NOT NULL,
 	`full_name` VARCHAR(128) NULL,
 	`token` VARCHAR(32) NULL,
 	`portrait` VARCHAR(2086) NULL,
 	`token_expire_time` INT UNSIGNED NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX idx_username (`username`),
-	INDEX idx_token (`token`)
+	INDEX idx_token (`token`, `token_expire_time`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
@@ -42,12 +42,13 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`event_tab` (
 	`address` VARCHAR(128) NOT NULL,
 	`lon` FLOAT NOT NULL,
 	`lat` FLOAT NOT NULL,
-	`main_pictures` VARCHAR(2086) NOT NULL DEFAULT "",
+	`main_picture` VARCHAR(2086) NOT NULL DEFAULT "",
 	`create_time` INT UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
-	INDEX idx_channel_id (`create_time`, `channel_id`),
 	INDEX idx_period (`create_time`, `start_time`, `end_time`),
-	INDEX idx_channel_id_period (`create_time`, `channel_id`, `start_time`, `end_time`)
+	INDEX idx_end_time (`create_time`, `end_time`),
+	INDEX idx_channel_id_period (`create_time`, `channel_id`, `start_time`, `end_time`),
+	INDEX idx_channel_id_end_time (`create_time`, `channel_id`, `end_time`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`like_tab` (
 	`event_id` BIGINT UNSIGNED NOT NULL,
 	`create_time` INT UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
-	INDEX idx_event_id_user_id (`event_id`, `user_id`)
+	UNIQUE INDEX idx_event_id_user_id (`event_id`, `user_id`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
@@ -100,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `social_event_db`.`participant_tab` (
 	`event_id` BIGINT UNSIGNED NOT NULL,
 	`create_time` INT UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
-	INDEX idx_event_id_user_id (`event_id`, `user_id`)
+	UNIQUE INDEX idx_event_id_user_id (`event_id`, `user_id`)
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;

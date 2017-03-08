@@ -27,7 +27,7 @@ Body
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 ### Response
 #### 200
@@ -45,10 +45,10 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
 
 ## `GET events`
 
-### Request 
+### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 params
 ```
@@ -82,8 +82,8 @@ per=20
             "location": "White House",
             "address": "Washington DC",
             "lat": 100.1234,
-            "long": 100.1234,
-            "main_picture_url": "http://social_events/00001.png",
+            "lon": 100.1234,
+            "main_picture": "http://social_events/00001.png",
             "user_like_id": 1,
             "user_participant_id": 1
         }
@@ -96,7 +96,7 @@ per=20
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 
 ### Response
@@ -116,8 +116,8 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
     "location": "White House",
     "address": "Washington DC",
     "lat": 100.1234,
-    "long": 100.1234,
-    "main_picture_url": "http://social_events/images/00001.png",
+    "lon": 100.1234,
+    "main_picture": "http://social_events/images/00001.png",
     "comments": [
         {
             "id": 1,
@@ -147,7 +147,7 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
             "create_time": 1488850020
         }
     ]
-}   
+}
 ```
 #### 401
 #### 404
@@ -160,7 +160,7 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 ### Response
 #### 200
@@ -184,13 +184,14 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 body
 ```
 {
     "content": "Not that interesting...",
     "event_id": 1,
+    "user_id": 1,
     "reply_comment_id": 1
 }
 ```
@@ -218,7 +219,7 @@ body
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 ### Response
 #### 200
@@ -230,7 +231,7 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
         "user_full_name": "Martin Hodges",
         "user_portrait": "http://social_events/images/00001.png",
         "create_time": 1488850020
-    }    
+    }
 ]
 ```
 #### 401
@@ -240,7 +241,7 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 body
 ```
@@ -255,25 +256,24 @@ body
 {
     "id": 1,
     "user_id": 2,
-    "user_full_name": "Martin Hodges",
-    "user_portrait": "http://social_events/images/00001.png",
+    "event_id": 1,
     "create_time": 1488850020
-}   
+}
 ```
 #### 401
 #### 404
 
-## `DELETE likes/1`
+## `DELETE likes/1`, `POST unlikes/1`
 ### Response
 #### 200
 ```
 {
     "id": 1,
     "user_id": 2,
-    "user_full_name": "Martin Hodges",
-    "user_portrait": "http://social_events/images/00001.png",
-    "create_time": 1488850020
-}   
+    "event_id": 1,
+    "create_time": 1488850020,
+    "delete_time": 1488850030
+}
 ```
 #### 401
 #### 404
@@ -286,7 +286,7 @@ body
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 ### Response
 #### 200
@@ -308,7 +308,7 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 body
 ```
@@ -322,19 +322,18 @@ body
 {
     "id": 1,
     "user_id": 2,
-    "user_full_name": "Martin Hodges",
-    "user_portrait": "http://social_events/images/00001.png",
+    "event_id": 1,
     "create_time": 1488850020
 }
 ```
 #### 401
 #### 404
 
-## `DELETE participants/1`
+## `DELETE participants/1`, `POST unparticipants/1`
 ### Request
 header
 ```
-Authorization: Token 34611da09e1f4f0195d2591cdda624d4
+HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
 ```
 
 ### Response
@@ -343,12 +342,10 @@ Authorization: Token 34611da09e1f4f0195d2591cdda624d4
 {
     "id": 1,
     "user_id": 2,
-    "user_full_name": "Martin Hodges",
-    "user_portrait": "http://social_events/images/00001.png",
-    "create_time": 1488850020
+    "event_id": 1,
+    "create_time": 1488850020,
+    "delete_time": 1488850030
 }
 ```
 #### 401
 #### 404
-
-
