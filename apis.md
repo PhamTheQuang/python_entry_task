@@ -118,6 +118,10 @@ HTTP AUTHORIZATION: Token 34611da09e1f4f0195d2591cdda624d4
     "lat": 100.1234,
     "lon": 100.1234,
     "main_picture": "http://social_events/images/00001.png",
+    "pictures": [
+        "http://social_events/images/00002.png",
+        "http://social_events/images/00003.png"
+    ],
     "comments": [
         {
             "id": 1,

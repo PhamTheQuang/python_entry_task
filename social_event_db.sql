@@ -56,7 +56,7 @@ ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS `social_event_db`.`picture_tab` (
 	`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`event_id` BIGINT UNSIGNED NOT NULL,
-	`path` VARCHAR(2086) NOT NULL,
+	`image` VARCHAR(2086) NOT NULL,
 	PRIMARY KEY (`id`),
 	INDEX idx_event_id (`event_id`)
 )

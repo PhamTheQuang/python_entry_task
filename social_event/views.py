@@ -152,8 +152,9 @@ def _json_response(body, status=200):
 def _json_error_response(status, *errors):
     return _json_response({"errors": errors}, status)
 
-#============= RENDER METHODS ====================
+#============= RENDER METHODS =======================
 # Similar to template, but construct dict object here
+
 def _render_events(events, user_likes, user_participants):
     res = []
     for event in events:
@@ -173,10 +174,14 @@ def _render_event(event):
     res = _render_attributes_of(event, "id", "title", "description", "start_time", "end_time", "channel_id", "total_comments", "total_likes", "total_participants", "location", "address", "lat", "lon")
     res['channel_name'] = event.channel.name
     res['main_picture'] = attachment.public_url(event.main_picture)
+    # res['pictures'] = _render_pictures(event.picture_set)
     res['comments'] =_render_comments(event.comment_set.all())
     res['likes'] = _render_interactions(event.like_set.all())
     res['participants'] = _render_interactions(event.participant_set.all())
     return dict(res)
+
+def _render_pictures(pictures):
+    return map(attachment.public_url, pictures)
 
 def _render_comments(comments):
     return map(_render_comment, comments.prefetch_related('user'))
@@ -184,7 +189,7 @@ def _render_comments(comments):
 def _render_comment(comment):
     res = _render_attributes_of(comment, "id", "content", "user_id", "create_time", "reply_comment_id")
     res["user_full_name"] = comment.user.full_name
-    res["user_portrait"] = comment.user.portrait
+    res["user_portrait"] = attachment.public_url(comment.user.portrait)
     return res
 
 def _render_interactions(interactions):
@@ -193,7 +198,7 @@ def _render_interactions(interactions):
 def _render_interaction(interaction):
     res = _render_attributes_of(interaction, "id", "user_id", "create_time")
     res["user_full_name"] = interaction.user.full_name
-    res["user_portrait"] = interaction.user.portrait
+    res["user_portrait"] = attachment.public_url(interaction.user.portrait)
     return res
 
 def _render_attributes_of(obj, *args):

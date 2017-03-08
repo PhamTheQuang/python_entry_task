@@ -43,6 +43,9 @@ class Admin(AuthenticatableUser):
         db_table = "admin_tab"
         index_together = [["token", "token_expire_time"]]
 
+def _user_portrait_path(user, filename):
+    return "uploads/portraits/{1}_{2}".format(user.id, filename)
+
 class User(AuthenticatableUser):
     username = models.CharField(max_length=128, db_index=True)
     salt = models.CharField(max_length=32)
@@ -50,11 +53,14 @@ class User(AuthenticatableUser):
     token = models.CharField(max_length=32, blank=True)
     token_expire_time = models.PositiveIntegerField(null=True)
     full_name = models.CharField(max_length=128, blank=True)
-    portrait = models.CharField(max_length=2086, blank=True)
+    portrait = models.FileField(upload_to=_user_portrait_path, blank=True)
 
     class Meta:
         db_table = "user_tab"
         index_together = [["token", "token_expire_time"]]
+
+def _event_main_picture_path(event, filename):
+    return "uploads/events/{0}/main_{1}".format(event.id, filename)
 
 class Event(AutoTimestampModel):
     title = models.CharField(max_length=128)
@@ -69,7 +75,7 @@ class Event(AutoTimestampModel):
     address = models.CharField(max_length=128)
     lon = models.FloatField()
     lat = models.FloatField()
-    main_picture = models.CharField(max_length=2086, blank=True)
+    main_picture = models.FileField(upload_to=_event_main_picture_path, blank=True)
     create_time = models.PositiveIntegerField()
     channel = models.ForeignKey('Channel', db_constraint=False)
 
@@ -119,9 +125,12 @@ class Channel(models.Model):
     class Meta:
         db_table = "channel_tab"
 
+def _picture_image_path(picture, filename):
+    return "uploads/events/{0}/{1}".format(picture.event_id, filename)
+
 class Picture(models.Model):
     # event_id = models.BigIntegerField()
-    path = models.CharField(max_length=128)
+    image = models.FileField(upload_to=_picture_image_path)
     event = models.ForeignKey('Event', db_constraint=False, db_index=True)
 
     class Meta:

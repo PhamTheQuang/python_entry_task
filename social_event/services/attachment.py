@@ -1,4 +1,7 @@
 
-# TODO: return url of an attachment
+# If store in local server
 def public_url(key):
-    return key
+    if key:
+        return key.url
+    else:
+        return ""
