@@ -57,11 +57,18 @@ def events(request):
             events = events.filter(end_time__gt=from_time)
         if to_time:
             events = events.filter(start_time__lt=to_time)
+        total = events.count()
         # TODO: Check if should add index here
-        events = list(events.order_by('start_time', 'end_time').all()[offset:offset+per]) # conflict with debugger `list`
-        user_likes = _to_dict(Like.objects.filter(user=request.current_user, event__in=events), 'event_id')
-        user_participants = _to_dict(Participant.objects.filter(user=request.current_user, event__in=events), 'event_id')
-        resp = _render_events(events, user_likes, user_participants)
+        events = events.order_by('start_time', 'end_time').all()[offset:offset+per]
+        event_list = list(events) # eager load events
+        user_likes = _to_dict(Like.objects.filter(user=request.current_user, event__in=event_list), 'event_id')
+        user_participants = _to_dict(Participant.objects.filter(user=request.current_user, event__in=event_list), 'event_id')
+        resp = {
+            "total": total,
+            "page": page,
+            "per": per,
+            "events": _render_events(event_list, user_likes, user_participants)
+        }
         return _json_response(resp)
     except ValueError:
         return _json_error_response(400, "Incorrect data format")

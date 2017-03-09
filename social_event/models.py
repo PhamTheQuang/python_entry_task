@@ -11,6 +11,9 @@ class AuthenticatableUser(models.Model):
         self.password = kwargs.pop("password", "")
         super(AuthenticatableUser, self).__init__(*args, **kwargs)
 
+    def generate_token(self):
+        authentication.generate_token(self)
+
     def save(self, *args, **kwargs):
         # TODO: Check password is changed
         if self.pk is None:
