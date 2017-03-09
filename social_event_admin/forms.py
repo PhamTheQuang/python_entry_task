@@ -1,4 +1,5 @@
 from django import forms;
+from django.forms.models import inlineformset_factory
 
 from social_event.models import *
 
@@ -7,7 +8,8 @@ class SessionForm(forms.Form):
     password = forms.CharField(max_length=128)
 
 class EventForm(forms.ModelForm):
-
     class Meta:
         model = Event
         fields = ["title", "description", "start_time", "end_time", "location", "address", "lon", "lat", "main_picture", "channel"]
+
+PictureFormSet = inlineformset_factory(Event, Picture, fields=('image',))

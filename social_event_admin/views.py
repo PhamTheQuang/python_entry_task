@@ -33,7 +33,7 @@ def sign_in(request):
 def events(request):
     if request.method == "GET":
         page = request.GET.get('page')
-        events = Event.objects.order_by('start_time', 'end_time')
+        events = Event.objects.order_by('-id')
         paginator = Paginator(events, MAX_RESULT_PER_PAGE)
         try:
             event_page = paginator.page(page)
@@ -44,26 +44,33 @@ def events(request):
 
         return render(request, "events/index.html", {"event_page": event_page})
     else:
-        form = EventForm(request.POST, request.FILES)
-        if form.is_valid:
+        form = EventForm(request.POST, request.FILES, prefix="event")
+        if form.is_valid():
             event = form.save()
-            return HttpResponseRedirect(event.id)
+            formset = PictureFormSet(request.POST, request.FILES, instance=event, prefix="pictures")
+            if formset.is_valid():
+                formset.save()
+            return HttpResponseRedirect("/admin/events/" + str(event.id))
 
 @require_http_methods(["GET", "POST"])
 @decorator_from_middleware(AdminTokenValidateMiddleware)
 def event(request, id):
     event = get_object_or_404(Event, id=id)
     if request.method == "GET":
-        form = EventForm(instance=event)
+        form = EventForm(instance=event, prefix="event")
+        formset = PictureFormSet(instance=event, prefix="pictures")
     else:
-        form = EventForm(request.POST, request.FILES, instance=event)
-        if form.is_valid:
+        form = EventForm(request.POST, request.FILES, instance=event, prefix="event")
+        formset = PictureFormSet(request.POST, request.FILES, instance=event, prefix="pictures")
+        if form.is_valid() and formset.is_valid():
             form.save()
-            return HttpResponseRedirect(event.id)
-    return render(request, "events/form.html", {"form": form})
+            formset.save()
+            return HttpResponseRedirect("/admin/events/" + str(event.id))
+    return render(request, "events/form.html", {"form": form, "formset": formset})
 
 @require_GET
 @decorator_from_middleware(AdminTokenValidateMiddleware)
 def event_new(request):
-    form = EventForm()
-    return render(request, "events/form.html", {"form": form})
+    form = EventForm(prefix="event")
+    formset = PictureFormSet(prefix="pictures")
+    return render(request, "events/form.html", {"form": form, "formset": formset})

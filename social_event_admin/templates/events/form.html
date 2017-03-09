@@ -2,13 +2,18 @@
 {% load bootstrap3 %}
 
 {% block content %}
-    {% if form.instance %}
+    {% if form.instance.id %}
         <form action="/admin/events/{{ form.instance.id }}" method="POST" enctype="multipart/form-data">
     {% else %}
         <form action="/admin/events" method="POST" enctype="multipart/form-data">
     {% endif %}
         {% csrf_token %}
         {% bootstrap_form form %}
+        {{ formset.management_form }}
+        {% for subform in formset %}
+            {{ subform }}
+            <br />
+        {% endfor %}
         {% buttons %}
             <input type="submit" class="btn btn-primary" value="Submit" />
         {% endbuttons %}
