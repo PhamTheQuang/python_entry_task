@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block content %}
+    {% if form.instance %}
+        <form action="/admin/events/{{ form.instance.id }}" method="POST" enctype="multipart/form-data">
+    {% else %}
+        <form action="/admin/events" method="POST" enctype="multipart/form-data">
+    {% endif %}
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+            <input type="submit" class="btn btn-primary" value="Submit" />
+        {% endbuttons %}
+    </form>
+{% endblock %}

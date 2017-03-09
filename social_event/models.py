@@ -42,6 +42,9 @@ class Admin(AuthenticatableUser):
     token = models.CharField(max_length=32, blank=True)
     token_expire_time = models.PositiveIntegerField(null=True)
 
+    def __unicode__(self):
+        return self.username
+
     class Meta:
         db_table = "admin_tab"
         index_together = [["token", "token_expire_time"]]
@@ -57,6 +60,9 @@ class User(AuthenticatableUser):
     token_expire_time = models.PositiveIntegerField(null=True)
     full_name = models.CharField(max_length=128, blank=True)
     portrait = models.FileField(upload_to=_user_portrait_path, blank=True)
+
+    def __unicode__(self):
+        return self.username
 
     class Meta:
         db_table = "user_tab"
@@ -113,6 +119,9 @@ class Event(AutoTimestampModel):
             self.save()
         return interaction
 
+    def __unicode__(self):
+        return self.title
+
     class Meta:
         db_table = "event_tab"
         index_together = [
@@ -124,6 +133,9 @@ class Event(AutoTimestampModel):
 
 class Channel(models.Model):
     name = models.CharField(max_length=128)
+
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         db_table = "channel_tab"

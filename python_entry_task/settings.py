@@ -33,7 +33,9 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social_event'
+    'bootstrap3',
+    'social_event',
+    'social_event_admin'
 )
 
 MIDDLEWARE_CLASSES = (

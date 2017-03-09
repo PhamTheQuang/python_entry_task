@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <a class="btn btn-primary" href="/admin/events/new">
+        Add new event
+    </a>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <td>id</td>
+                <td>title</td>
+                <td>channel</td>
+                <td>description</td>
+                <td>image</td>
+                <td>likes</td>
+                <td>comments</td>
+                <td>participants</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_page.object_list %}
+                <tr>
+                    <td>{{ event.id }}</td>
+                    <td>
+                        <a href="/admin/events/{{ event.id }}">
+                            {{ event.title }}
+                        </a>
+                    </td>
+                    <td>{{ event.channel_id }}
+                    <td>{{ event.description }}</td>
+                    <td>
+                        {% if event.main_picture %}
+                            <img src="{{ event.main_picture.url }}" />
+                        {% endif %}
+                    </td>
+                    <td>{{ event.total_likes }}</td>
+                    <td>{{ event.total_comments }}</td>
+                    <td>{{ event.total_participants }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br />
+    <ul class="pagination">
+        {% if event_page.has_previous %}
+            <li><a href="?page=1">&laquo;</a></li>
+            <li><a href="?page={{ event_page.previous_page_number }}">&lt;</a></li>
+        {% endif %}
+        <li class="active"><a href="?page={{event_page.number}}">{{event_page.number}}</a></li>
+        {% if event_page.has_next %}
+            <li><a href="?page={{ event_page.next_page_number }}">&gt;</a></li>
+            <li><a href="?page={{ event_page.paginator.num_pages }}">&raquo;</a></li>
+        {% endif %}
+    </ul>
+    <hr />
+{% endblock %}

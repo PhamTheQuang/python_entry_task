@@ -16,7 +16,7 @@ CREATE TABLE `user_tab` (
     `token` varchar(32) NOT NULL,
     `token_expire_time` integer UNSIGNED,
     `full_name` varchar(128) NOT NULL,
-    `portrait` varchar(2086) NOT NULL
+    `portrait` varchar(100) NOT NULL
 )
 ;
 CREATE TABLE `event_tab` (
@@ -32,7 +32,7 @@ CREATE TABLE `event_tab` (
     `address` varchar(128) NOT NULL,
     `lon` double precision NOT NULL,
     `lat` double precision NOT NULL,
-    `main_picture` varchar(2086) NOT NULL,
+    `main_picture` varchar(100) NOT NULL,
     `create_time` integer UNSIGNED NOT NULL,
     `channel_id` integer NOT NULL
 )
@@ -44,7 +44,7 @@ CREATE TABLE `channel_tab` (
 ;
 CREATE TABLE `picture_tab` (
     `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `path` varchar(128) NOT NULL,
+    `image` varchar(100) NOT NULL,
     `event_id` integer NOT NULL
 )
 ;
