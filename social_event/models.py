@@ -59,7 +59,7 @@ class User(AuthenticatableUser):
     token = models.CharField(max_length=32, blank=True)
     token_expire_time = models.PositiveIntegerField(null=True)
     full_name = models.CharField(max_length=128, blank=True)
-    portrait = models.FileField(upload_to=_user_portrait_path, blank=True)
+    portrait = models.ImageField(upload_to=_user_portrait_path, blank=True)
 
     def __unicode__(self):
         return self.username
@@ -84,7 +84,7 @@ class Event(AutoTimestampModel):
     address = models.CharField(max_length=128)
     lon = models.FloatField()
     lat = models.FloatField()
-    main_picture = models.FileField(upload_to=_event_main_picture_path, blank=True)
+    main_picture = models.ImageField(upload_to=_event_main_picture_path, blank=True)
     create_time = models.PositiveIntegerField()
     channel = models.ForeignKey('Channel', db_constraint=False)
 
@@ -145,7 +145,7 @@ def _picture_image_path(picture, filename):
 
 class Picture(models.Model):
     # event_id = models.BigIntegerField()
-    image = models.FileField(upload_to=_picture_image_path)
+    image = models.ImageField(upload_to=_picture_image_path)
     event = models.ForeignKey('Event', db_constraint=False, db_index=True)
 
     class Meta:
