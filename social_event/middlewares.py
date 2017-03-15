@@ -1,5 +1,6 @@
 import re, json
 from django.http import HttpResponse
+from django.core.cache import cache
 
 from social_event.services import authentication
 from social_event.models import User, Event
@@ -28,8 +29,16 @@ class RequireEventMiddleware(object):
         if not event_id:
             return HttpResponse(json.dumps({"errors": ["Missing event"]}), status=400, content_type="application/json")
 
-        request.event = Event.objects.filter(id=event_id).first()
-        if not request.event:
+        key = "event.with_id." + str(event_id)
+        event = cache.get(key)
+        if not event:
+            event = Event.objects.filter(id=event_id).first()
+            if event:
+                cache.set(key, event)
+
+        if not event:
             return HttpResponse(json.dumps({"errors": ["Event not found"]}), status=404, content_type="application/json")
+
+        request.event = event
 
         return None

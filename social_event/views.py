@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.utils.decorators import decorator_from_middleware
 from django.forms.util import ValidationError
+from django.core.cache import cache
 
 from social_event.services import authentication, attachment
 from social_event.models import *
@@ -31,8 +32,12 @@ def channels(request):
 @require_GET
 @decorator_from_middleware(TokenValidateMiddleware)
 def event(request, id):
-    event = get_object_or_404(Event, id=id)
-    resp = _render_event(event)
+    key = "event.with_id" + str(id)
+    resp = cache.get(key)
+    if not resp:
+        event = get_object_or_404(Event, id=id)
+        resp = _render_event(event)
+        cache.set(key, resp)
     return _json_response(resp)
 
 @require_GET
@@ -50,25 +55,32 @@ def events(request):
         per = int(request.GET.get('per') or MAX_RESULT_PER_PAGE)
         offset = (page - 1) * per
 
-        events = Event.objects.filter(create_time__lte=timestamp)
-        if channel_id:
-            events = events.filter(channel_id=channel_id)
-        if from_time:
-            events = events.filter(end_time__gt=from_time)
-        if to_time:
-            events = events.filter(start_time__lt=to_time)
-        total = events.count()
-        # TODO: Check if should add index here
-        events = events.order_by('start_time', 'end_time').all()[offset:offset+per]
-        event_list = list(events) # eager load events
-        user_likes = _to_dict(Like.objects.filter(user=request.current_user, event__in=event_list), 'event_id')
-        user_participants = _to_dict(Participant.objects.filter(user=request.current_user, event__in=event_list), 'event_id')
-        resp = {
-            "total": total,
-            "page": page,
-            "per": per,
-            "events": _render_events(event_list, user_likes, user_participants)
-        }
+        key = _events_cache_key(channel_id, from_time, to_time, page, per)
+        resp = cache.get(key)
+
+        if not resp:
+            events = Event.objects.filter(create_time__lte=timestamp)
+            if channel_id:
+                events = events.filter(channel_id=channel_id)
+            if from_time:
+                events = events.filter(end_time__gt=from_time)
+            if to_time:
+                events = events.filter(start_time__lt=to_time)
+
+            total = events.count()
+            # TODO: Check if should add index here
+            events = events.order_by('start_time', 'end_time').all()[offset:offset+per]
+            event_list = list(events) # eager load events
+            user_likes = _to_dict(Like.objects.filter(user=request.current_user, event__in=event_list), 'event_id')
+            user_participants = _to_dict(Participant.objects.filter(user=request.current_user, event__in=event_list), 'event_id')
+            resp = {
+                "total": total,
+                "page": page,
+                "per": per,
+                "events": _render_events(event_list, user_likes, user_participants)
+            }
+            cache.set(key, resp)
+
         return _json_response(resp)
     except ValueError:
         return _json_error_response(400, "Incorrect data format")
@@ -86,8 +98,12 @@ def comments(request):
         resp = _render_attributes_of(comment, "id", "content", "user_id", "reply_comment_id", "event_id", "create_time")
         return _json_response(resp)
     else:
-        comments = Comment.objects.filter(event=request.event)
-        resp = _render_comments(comments)
+        key = "comments.with_event_id." + str(request.event.id)
+        resp = cache.get(key)
+        if not resp:
+            comments = Comment.objects.filter(event=request.event)
+            resp = _render_comments(comments)
+            cache.set(key, resp)
         return _json_response(resp)
 
 @csrf_exempt
@@ -114,8 +130,12 @@ def likes(request):
         resp = _render_attributes_of(like, "id", "user_id", "event_id", "create_time")
         return _json_response(resp)
     else:
-        likes = request.event.like_set.all()
-        resp = _render_interactions(likes)
+        key = "likes.with_event_id." + str(request.event)
+        resp = cache.get(key)
+        if not key:
+            likes = request.event.like_set.all()
+            resp = _render_interactions(likes)
+            cache.set(key, resp)
         return _json_response(resp)
 
 @csrf_exempt
@@ -142,8 +162,12 @@ def participants(request):
         resp = _render_attributes_of(participant, "id", "user_id", "event_id", "create_time")
         return _json_response(resp)
     else:
-        participants = request.event.participant_set.all()
-        resp = _render_interactions(participants)
+        key = "participants.with_event_id." + str(request.event)
+        resp = cache.get(key)
+        if not key:
+            participants = request.event.participant_set.all()
+            resp = _render_interactions(participants)
+            cache.set(key, resp)
         return _json_response(resp)
 
 # TODO: Move this to utilities
@@ -158,6 +182,9 @@ def _json_response(body, status=200):
 
 def _json_error_response(status, *errors):
     return _json_response({"errors": errors}, status)
+
+def _events_cache_key(channel_id, from_time, to_time, page, per):
+    return "events.search.{0}.{1}.{2}.{3}.{4}".format(channel_id, from_time, to_time, page, per)
 
 #============= RENDER METHODS =======================
 # Similar to template, but construct dict object here

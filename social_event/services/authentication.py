@@ -1,5 +1,7 @@
 import uuid, hashlib, time
 
+from django.core.cache import cache
+
 SESSION_DURATION = 86400
 
 def generate_password_digest(user):
@@ -7,6 +9,9 @@ def generate_password_digest(user):
     user.password_digest = hashlib.sha512(user.password + user.salt).hexdigest()
 
 def generate_token(user):
+    if user.token:
+        key = _token_cache_key(user.token)
+        cache.delete(key)
     user.token = uuid.uuid4().hex
     user.token_expire_time = _current_time() + SESSION_DURATION
 
@@ -22,7 +27,16 @@ def sign_in(model, username, password):
         return user
 
 def get_user(model, token):
-    return model.objects.filter(token=token, token_expire_time__gt=_current_time()).first()
+    key = _token_cache_key(token)
+    user = cache.get(key)
+    if not user:
+        user = model.objects.filter(token=token, token_expire_time__gt=_current_time()).first()
+        if user:
+            cache.set(key, user)
+    return user
 
 def _current_time():
     return int(time.time())
+
+def _token_cache_key(token):
+    return 'users.with_token.' + token
