@@ -195,7 +195,6 @@ body
 {
     "content": "Not that interesting...",
     "event_id": 1,
-    "user_id": 1,
     "reply_comment_id": 1
 }
 ```

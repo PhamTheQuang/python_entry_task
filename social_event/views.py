@@ -94,7 +94,7 @@ def comments(request):
 @require_POST
 @decorator_from_middleware(TokenValidateMiddleware)
 def unlike(request, id):
-    like = get_object_or_404(Like, id=id)
+    like = get_object_or_404(Like, id=id, user=request.current_user)
     like.event.delete_like(like)
     resp = _render_attributes_of(like, "id", "user_id", "event_id", "create_time")
     resp["delete_time"] = int(time.time())
@@ -122,7 +122,7 @@ def likes(request):
 @require_POST
 @decorator_from_middleware(TokenValidateMiddleware)
 def unparticipate(request, id):
-    participant = get_object_or_404(Participant, id=id)
+    participant = get_object_or_404(Participant, id=id, user=request.current_user)
     participant.event.delete_participant(participant)
     resp = _render_attributes_of(participant, "id", "user_id", "event_id", "create_time")
     resp["delete_time"] = int(time.time())

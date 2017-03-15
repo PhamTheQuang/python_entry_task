@@ -1,6 +1,5 @@
 [Unit]
 Description=GUnicorn HTTP Server
-Requires=gunicorn.socket
 After=network.target
 
 [Service]
@@ -10,7 +9,7 @@ Group=elune
 RuntimeDirectory=gunicorn
 WorkingDirectory=/home/elune/Documents/projects/python_entry_task
 ExecStart=/home/elune/Documents/projects/python_entry_task/venv/bin/gunicorn --pid /run/gunicorn/pid \
-        --bind unix:/run/gunicorn/socket python_entry_task.wsgi
+        --bind unix:/run/gunicorn/socket python_entry_task.wsgi --workers=5
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true

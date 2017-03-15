@@ -6,6 +6,8 @@ from social_event.models import *
 
 BLOCK_SIZE = 10000
 
+EVENT = 570000 # resume
+
 class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
