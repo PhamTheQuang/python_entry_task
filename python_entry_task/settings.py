@@ -20,11 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'jihu+q8)eozg2a7!f=vdqm!qi6+(s*pc$wjn!gnvuk_!&_75fs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -111,5 +111,8 @@ LOGGING = {
     }
 }
 
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "uploads")
-MEDIA_URL = '/assets/'
+# MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "python_entry_task_media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")

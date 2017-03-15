@@ -45,12 +45,15 @@ def events(request):
         return render(request, "events/index.html", {"event_page": event_page})
     else:
         form = EventForm(request.POST, request.FILES, prefix="event")
+        # TODO: use transaction here
         if form.is_valid():
             event = form.save()
             formset = PictureFormSet(request.POST, request.FILES, instance=event, prefix="pictures")
             if formset.is_valid():
                 formset.save()
             return HttpResponseRedirect("/admin/events/" + str(event.id))
+        formset = PictureFormSet(request.POST, request.FILES, prefix="pictures")
+        return render(request, "events/form.html", {"form": form, "formset": formset})
 
 @require_http_methods(["GET", "POST"])
 @decorator_from_middleware(AdminTokenValidateMiddleware)

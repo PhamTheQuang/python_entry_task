@@ -9,5 +9,6 @@ src/*.egg-info
 lib
 lib64
 venv
-uploads
+media
+static
 *.pyc
